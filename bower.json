@@ -1,0 +1,9 @@
+{
+  "name": "personalized-follow",
+  "main": "src/index.js",
+  "version": "0.0.0",
+  "dependencies": {
+    "livefyre-bootstrap": "git+ssh://git@github.com/Livefyre/livefyre-bootstrap.git#1.2.4"
+  },
+  "devDependencies": {}
+}

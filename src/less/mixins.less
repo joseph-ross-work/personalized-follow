@@ -1,0 +1,19 @@
+/**
+ * @fileoverview Helper mixins.
+ */
+
+.ellipsis(@percent) {
+  max-width: percentage(@percent);
+  position: relative;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.wrap() {
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
+}
