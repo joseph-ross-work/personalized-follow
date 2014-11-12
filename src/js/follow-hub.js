@@ -1,6 +1,8 @@
+var FollowService = require('./follow-service')
 
 function FollowHub(opts) {
     this._bus = opts.bus || window;
+    this._service = new FollowService();
 }
 
 FollowHub.prototype._onPostMessage = function(event){
@@ -20,21 +22,25 @@ FollowHub.prototype._onPostMessage = function(event){
         return;
     } 
 
-    /*if (msg.action === 'put'){ 
-        this._updateTopicState(msg.data.state);
-    }*/
+    if (msg.action === 'get') { 
+        this._service.getTopicStates(this._sendTopicStateUpdate);
+    }
+
+    if (msg.action === 'put') {
+        this._service.updateTopicState({ topics: msg.data.topic, state: msg.data.state});
+    }
 };
 
-FollowHub.prototype._sendTopicStateUpdate = function (topic, state) {
+FollowHub.prototype._sendTopicStateUpdate = function (opts) {
     var msg = {
         to: 'follow-widget',
         action: 'put',
         data: {
-            topic: this.topic,
-            state: this.state
+            topic: opts.topic,
+            state: opts.state
         }
     }
-    this.bus.postMessage(JSON.stringify(msg),'*');
+    this._bus.postMessage(JSON.stringify(msg),'*');
 };
 
 FollowHub.prototype._sendTopicStates = function () {
@@ -42,10 +48,14 @@ FollowHub.prototype._sendTopicStates = function () {
         to: 'follow-widget',
         action: 'get',
         data: {
-            topics: []
+            topics: [ { topic: 'topic', state: 'state'} ]
         }
     }
-    this.bus.postMessage(JSON.stringify(msg),'*');
+    this._bus.postMessage(JSON.stringify(msg),'*');
+};
+
+FollowHub.prototype.destroy = function () {
+
 };
 
 module.exports = FollowHub;
