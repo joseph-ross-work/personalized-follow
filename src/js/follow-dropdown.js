@@ -14,6 +14,7 @@ function FollowDropdown(opts) {
 
 FollowDropdown.prototype._initialize = function() {
     this._createButtons();
+    this._bus.addEventListener('message', this._onPostMessage);
     this._requestTopicStates();
     this.render();
 };
@@ -28,13 +29,11 @@ FollowDropdown.prototype._createButtons = function() {
 };
 
 FollowDropdown.prototype._updateButtons = function(topics) { 
-    topics.forEach(function(topicObj) {
-        _buttons.some(function(button) {
-            if(button.topic === topic) {
-                button.updateTopicState(topic.state);
-                return true;
-            }
-        });
+    _buttons.forEach(function(button) {
+        if(topics[button.topic]) {
+            button.updateTopicState(topics[button.topic].state);
+            return true;
+        }
     });
 };
 
@@ -80,6 +79,7 @@ FollowDropdown.prototype.destroy = function () {
     this._buttons.forEach(function(btn, i, arr){
         btn.destroy();
     });
+    this._bus.removeEventListener('message', this._onPostMessage);
 };
 
 module.exports = FollowDropdown;

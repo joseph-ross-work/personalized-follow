@@ -9,6 +9,7 @@ function FollowedTopicList(opts) {
 };
 
 FollowedTopicList.prototype._initialize = function() {
+    this._bus.addEventListener('message', this._onPostMessage);
     this._requestTopicStates();
     this.render();
 };
@@ -24,9 +25,7 @@ FollowedTopicList.prototype._requestTopicStates = function () {
     var msg = {
         to: 'follow-hub',
         action: 'get',
-        data: {
-            topics: []
-        }
+        data: {}
     }
     this._bus.postMessage(JSON.stringify(msg),'*');
 };
@@ -62,6 +61,7 @@ FollowedTopicList.prototype.destroy = function () {
     this._buttons.forEach(function(btn, i, arr){
         btn.destroy();
     });
+    this._bus.removeEventListener('message', this._onPostMessage);
 };
 
 module.exports = FollowedTopicList;

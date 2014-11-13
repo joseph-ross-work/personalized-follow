@@ -24,7 +24,8 @@
     "events-event-emitter": "0.0.4",
     "flux-dispatcher": "0.1.0",
     "node-polyglot": "0.4.1",
-    "superagent": "0.18.2"
+    "superagent": "0.18.2",
+    "reqwest": "1.1.5"
   },
   "devDependencies": {
     "express": "3.4.8",

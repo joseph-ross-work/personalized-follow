@@ -8,7 +8,8 @@ function FollowButton(opts) {
     this._state = opts.state === false ?  false : true;
     this.el = opts.el || document.createElement('div');
 
-    this.render(true;)
+    this._bus.addEventListener('message', this._onPostMessage);
+    this.render();
 }
 
 FollowButton.prototype._onPostMessage = function(event){
@@ -67,7 +68,8 @@ FollowButton.prototype.render = function () {
 };
 
 FollowButton.prototype.destroy = function () {
-
+    this._bus.removeEventListener('message', this._onPostMessage);
+    this.el.parent.removeChild(this.el);
 };
 
 module.exports = FollowButton;
