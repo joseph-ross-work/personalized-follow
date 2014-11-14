@@ -1,6 +1,6 @@
-var base64 = require('base64')
-var auth = require('auth')
-var FollowService = require('./follow-service')
+var base64 = require('base64');
+var auth = require('livefyre-auth');
+var FollowService = require('./follow-service');
 
 function FollowHub(opts) {
     this._bus = opts.bus || window;

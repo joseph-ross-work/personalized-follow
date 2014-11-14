@@ -3,9 +3,8 @@
   "main": "src/index.js",
   "version": "0.0.0",
   "dependencies": {
-    "livefyre-bootstrap": "git+ssh://git@github.com/Livefyre/livefyre-bootstrap.git#1.2.4",
-    "livefyre-auth": "Livefyre/livefyre-auth.git#v0.9.0",
-    "base64": "~0.4.0"
+    "livefyre-bootstrap": "git+ssh://git@github.com/Livefyre/livefyre-bootstrap.git#v1.3.7",
+    "livefyre-auth": "git+ssh://git@github.com/Livefyre/livefyre-auth#~0.6.1"
   },
   "devDependencies": {}
 }

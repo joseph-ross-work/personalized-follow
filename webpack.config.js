@@ -23,7 +23,10 @@ module.exports = {
         path.join(__dirname, 'lib')
       ],
       alias: {
-        superagent: path.join(__dirname, 'node_modules', 'superagent', 'superagent.js')
+        less: path.join(__dirname, 'node_modules', 'less', 'dist', 'less-1.6.0.js'),
+        "livefyre-auth": path.join(__dirname, 'lib', 'livefyre-auth', 'src', 'main.js'),
+        mout: path.join(__dirname, 'node_modules', 'mout', 'src'),
+        auth: path.join(__dirname, 'lib', 'auth', 'src', 'main.js')
       }
   },
   output: {
@@ -32,7 +35,6 @@ module.exports = {
   },
   module: {
     loaders: [
-      {test: /\.js$/, loader: 'jsx-loader'},
       {test: /\.css$/, loader: 'style-loader!css-loader'},
       {test: /\.less$/,loader: 'style-loader!css-loader!less-loader?root=../../../../'},
       {test: /\.woff$/, loader: 'url-loader'},
