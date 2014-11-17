@@ -1,4 +1,5 @@
 var FollowButton = require('./follow-button');
+var template = require('../templates/follow-topic-list.hb');
 
 function FollowedTopicList(opts) {
     this._buttons = [];
@@ -54,7 +55,15 @@ FollowedTopicList.prototype._onPostMessage = function(event){
 };
 
 FollowedTopicList.prototype.render = function () {
-    this.el.innerHTML('');
+    var buttons = this._buttons.map(function(btn){
+        return btn.render();
+    });
+    var context = {
+        buttons: buttons
+    };
+    var html = template(context);
+    this.el.innerHTML = html;
+    return this.el.outerHTML;
 };
 
 FollowedTopicList.prototype.destroy = function () {
@@ -62,6 +71,7 @@ FollowedTopicList.prototype.destroy = function () {
         btn.destroy();
     });
     this._bus.removeEventListener('message', this._onPostMessage);
+    this.el.parent.removeChild(this.el);
 };
 
 module.exports = FollowedTopicList;

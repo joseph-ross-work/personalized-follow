@@ -1,4 +1,5 @@
 var FollowButton = require('./follow-button');
+var template = require('../templates/follow-dropdown.hb');
 
 function FollowDropdown(opts) {
     if (opts.topics !== 'array' || opts.topics.length === 0) {
@@ -72,7 +73,15 @@ FollowDropdown.prototype._onPostMessage = function(event){
 };
 
 FollowDropdown.prototype.render = function () {
-    this.el.innerHTML('');
+    var buttons = this._buttons.map(function(btn){
+        return btn.render();
+    });
+    var context = {
+        buttons: buttons
+    };
+    var html = template(context);
+    this.el.innerHTML = html;
+    return this.el.outerHTML;
 };
 
 FollowDropdown.prototype.destroy = function () {
@@ -80,6 +89,7 @@ FollowDropdown.prototype.destroy = function () {
         btn.destroy();
     });
     this._bus.removeEventListener('message', this._onPostMessage);
+    this.el.parent.removeChild(this.el);
 };
 
 module.exports = FollowDropdown;

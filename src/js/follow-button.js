@@ -1,3 +1,5 @@
+var template = require('../templates/follow-button.hb');
+
 function FollowButton(opts) {
     if (!opts.topic) {
         return;
@@ -64,7 +66,13 @@ FollowButton.prototype._sendTopicStateUpdate = function () {
 };
 
 FollowButton.prototype.render = function () {
-    this.el.innerHTML('');
+    var context = { 
+        title: this.topic.displayName,
+        text: !this._state ? 'Follow' : 'Unfollow'
+    };
+    var html = template(context);
+    this.el.innerHTML = html;
+    return this.el.outerHTML;
 };
 
 FollowButton.prototype.destroy = function () {

@@ -35,6 +35,7 @@ module.exports = {
   },
   module: {
     loaders: [
+      {test: /\.hb$/, loader: 'handlebars-loader' },
       {test: /\.css$/, loader: 'style-loader!css-loader'},
       {test: /\.less$/,loader: 'style-loader!css-loader!less-loader?root=../../../../'},
       {test: /\.woff$/, loader: 'url-loader'},
