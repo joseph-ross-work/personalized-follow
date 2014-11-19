@@ -1,28 +1,33 @@
 var FollowButton = require('./follow-button');
-var template = require('../templates/follow-topic-list.hb');
 
-function FollowedTopicList(opts) {
+function FollowList(opts) {
     this._buttons = [];
     this._bus = opts.bus;
+    this._destroyOnUnfollow = typeof opts.destroyOnUnfollow === 'boolean' ? opts.destroyOnUnfollow : false;
     this.el = opts.el || document.createElement('div');
 
     this._initialize();
 };
 
-FollowedTopicList.prototype._initialize = function() {
+FollowList.prototype.template = require('../templates/follow-list.hb');
+
+FollowList.prototype._initialize = function() {
     this._bus.addEventListener('message', this._onPostMessage);
     this._requestTopicStates();
     this.render();
 };
 
-FollowedTopicList.prototype._createButtons = function() {
-    this._buttons = this._topics.map(function(topic, i, arr){
-        return new FollowButton({ topic: topic });
+FollowList.prototype._createButtons = function(topics) {
+    this._buttons = topics.map(function(topic, i, arr){
+        return new FollowButton({ 
+            topic: topic,
+            destroyOnUnfollow: this._destroyOnUnfollow
+        });
     });
     this.render();
 };
 
-FollowedTopicList.prototype._requestTopicStates = function () {
+FollowList.prototype._requestTopicStates = function () {
     var msg = {
         to: 'follow-hub',
         action: 'get',
@@ -31,8 +36,11 @@ FollowedTopicList.prototype._requestTopicStates = function () {
     this._bus.postMessage(JSON.stringify(msg),'*');
 };
 
+FollowList.prototype._onGet = function (topics) {
+    this._createButtons(topics);
+}
 
-FollowedTopicList.prototype._onPostMessage = function(event){
+FollowList.prototype._onPostMessage = function(event){
     var msg = null; 
     if (typeof event.data === 'object') {
         msg = event.data;
@@ -50,23 +58,24 @@ FollowedTopicList.prototype._onPostMessage = function(event){
     } 
 
     if (msg.action === 'get'){ 
-        this._createButtons(msg.data.topics);
+        this._onGet(msg.data.topics)
     }
 };
 
-FollowedTopicList.prototype.render = function () {
-    var buttons = this._buttons.map(function(btn){
-        return btn.render();
-    });
-    var context = {
-        buttons: buttons
-    };
-    var html = template(context);
+FollowList.prototype.render = function () {
+    var context = {};
+    var html = this.template(context);
     this.el.innerHTML = html;
+    
+    var ul = this.el.querySelector('ul');
+    this._buttons.each(function(btn){
+        btn.render();
+        ul.append(btn.el);
+    });
     return this.el.outerHTML;
 };
 
-FollowedTopicList.prototype.destroy = function () {
+FollowList.prototype.destroy = function () {
     this._buttons.forEach(function(btn, i, arr){
         btn.destroy();
     });
@@ -74,4 +83,4 @@ FollowedTopicList.prototype.destroy = function () {
     this.el.parent.removeChild(this.el);
 };
 
-module.exports = FollowedTopicList;
+module.exports = FollowList;
