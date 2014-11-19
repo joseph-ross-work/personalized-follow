@@ -17,19 +17,23 @@ function FollowHub(opts) {
 FollowHub.prototype.attachListeners = function() {
     var self = this;
 
-    this._bus.addEventListener('message', this._onPostMessage);
+    this._bus.addEventListener('message', this._onPostMessage.bind(this));
 
     this._auth.on('login.livefyre', this.initFromUser.bind(this));
 
     this._auth.on('logout', function() {
+
         //Send out a kill msg?
     });
 };
 
-FollowHub.prototype.initFromUser = function(user) {
+FollowHub.prototype.initFromUser = function(newUser) {
+    if (this._user.id === newUser.id) {
+        return;
+    }
     this._user = newUser;
-    self._service.setToken(newUser);
-    self._service.getTopicStates(self._sendTopicStates);
+    this._service.setToken(newUser);
+    this._service.getTopicStates(this._sendTopicStates.bind(this));
 };
 
 FollowHub.prototype._onPostMessage = function(event) {
@@ -50,7 +54,7 @@ FollowHub.prototype._onPostMessage = function(event) {
     } 
 
     if (msg.action === 'get') { 
-        this._service.getTopicStates(this._sendTopicStates);
+        this._service.getTopicStates(this._sendTopicStates.bind(this));
     }
 
     if (msg.action === 'put') {
@@ -60,7 +64,7 @@ FollowHub.prototype._onPostMessage = function(event) {
                 state: msg.data.state, 
                 displayName: msg.data.displayName
             }, 
-            this._sendTopicStateUpdate
+            this._sendTopicStateUpdate.bind(this)
         );
     }
 };
@@ -80,7 +84,7 @@ FollowHub.prototype._sendTopicStateUpdate = function (opts) {
 FollowHub.prototype._sendTopicStates = function (topic) {
     var msg = {
         to: 'follow-widget',
-        action: clear ? 'post' : 'put',
+        action: 'put',
         data: {
             //TODO: Remove placeholder when ready to test
             topics: { 'someTopic' : { state: true, displayName: 'Some Topic'} }

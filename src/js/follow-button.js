@@ -1,5 +1,3 @@
-var template = require('../templates/follow-button.hb');
-
 function FollowButton(opts) {
     if (!opts.topic) {
         return;
@@ -13,6 +11,8 @@ function FollowButton(opts) {
     this._bus.addEventListener('message', this._onPostMessage);
     this.render();
 }
+
+FollowButton.prototype.template = require('../templates/follow-button.hb');
 
 FollowButton.prototype._onPostMessage = function(event){
     var msg = null; 
@@ -70,7 +70,7 @@ FollowButton.prototype.render = function () {
         title: this.topic.displayName,
         text: !this._state ? 'Follow' : 'Unfollow'
     };
-    var html = template(context);
+    var html = this.template(context);
     this.el.innerHTML = html;
     return this.el.outerHTML;
 };

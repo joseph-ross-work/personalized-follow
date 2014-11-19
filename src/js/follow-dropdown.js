@@ -20,7 +20,7 @@ FollowDropdown.prototype._initialize = function() {
     this.render();
 };
 
-FollowDropdown.prototype._onGet = function (topics) {
+FollowDropdown.prototype._onPut = function (topics) {
     this._updateButtons(topics);
 };
 

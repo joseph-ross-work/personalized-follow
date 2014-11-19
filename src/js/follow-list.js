@@ -2,7 +2,7 @@ var FollowButton = require('./follow-button');
 
 function FollowList(opts) {
     this._buttons = [];
-    this._bus = opts.bus;
+    this._bus = opts.bus || window;
     this._destroyOnUnfollow = typeof opts.destroyOnUnfollow === 'boolean' ? opts.destroyOnUnfollow : false;
     this.el = opts.el || document.createElement('div');
 
@@ -36,7 +36,7 @@ FollowList.prototype._requestTopicStates = function () {
     this._bus.postMessage(JSON.stringify(msg),'*');
 };
 
-FollowList.prototype._onGet = function (topics) {
+FollowList.prototype._onPut = function (topics) {
     this._createButtons(topics);
 }
 
@@ -57,8 +57,8 @@ FollowList.prototype._onPostMessage = function(event){
         return;
     } 
 
-    if (msg.action === 'get'){ 
-        this._onGet(msg.data.topics)
+    if (msg.action === 'put'){ 
+        this._onPut(msg.data.topics)
     }
 };
 
@@ -66,9 +66,9 @@ FollowList.prototype.render = function () {
     var context = {};
     var html = this.template(context);
     this.el.innerHTML = html;
-    
+
     var ul = this.el.querySelector('ul');
-    this._buttons.each(function(btn){
+    this._buttons.forEach(function(btn){
         btn.render();
         ul.append(btn.el);
     });

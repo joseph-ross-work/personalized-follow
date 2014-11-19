@@ -55,6 +55,7 @@ FollowService.prototype.setToken = function(token) {
 
 FollowService.prototype.getTopicStates = function(callback) {
     var store = JSON.parse(window.localStorage.getItem(storageId));
+    store = store ? store : {};
     var isLessThanDayOld = true;
 
     if (store.lastUpdated) {

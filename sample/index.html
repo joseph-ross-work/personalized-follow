@@ -5,11 +5,17 @@
     <link rel="stylesheet" href="../dist/css/personalized-follow.css">
   </head>
   <body>
-    <div id="pm"></div>
+    <button id='auth-button'></button>
+    <div id="list"></div>
     <script src="//cdn.livefyre.com/Livefyre.js"></script>
     <script>
-    Livefyre.require(['http://localhost:8001/dist/personalized-follow.js'], function (PollManager) {
-
+    Livefyre.require(['http://localhost:8001/dist/personalized-follow.min.js',
+      'livefyre-auth',
+      'auth/contrib/auth-button'], function (Follow, Auth, createAuthButton) {
+        createAuthButton(Auth, document.getElementById('auth-button'));
+        var topicList = new follow.topicList({
+          el: document.getElementById('list')
+        });
     });
     </script>
   </body>
