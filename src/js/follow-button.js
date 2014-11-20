@@ -8,13 +8,14 @@ function FollowButton(opts) {
     this._state = opts.state === false ?  false : true;
     this.el = opts.el || document.createElement('div');
 
-    this._bus.addEventListener('message', this._onPostMessage);
+    this._bus.addEventListener('message', this._onPostMessage.bind(this));
     this.render();
 }
 
 FollowButton.prototype.template = require('../templates/follow-button.hb');
 
 FollowButton.prototype._onPostMessage = function(event){
+    console.log('On Post in Button')
     var msg = null; 
     if (typeof event.data === 'object') {
         msg = event.data;

@@ -12,13 +12,13 @@ function FollowList(opts) {
 FollowList.prototype.template = require('../templates/follow-list.hb');
 
 FollowList.prototype._initialize = function() {
-    this._bus.addEventListener('message', this._onPostMessage);
+    this._bus.addEventListener('message', this._onPostMessage.bind(this));
     this._requestTopicStates();
     this.render();
 };
 
 FollowList.prototype._createButtons = function(topics) {
-    this._buttons = topics.map(function(topic, i, arr){
+    this._buttons = Object.keys(topics).map(function(topic, i, arr){
         return new FollowButton({ 
             topic: topic,
             destroyOnUnfollow: this._destroyOnUnfollow
@@ -69,8 +69,7 @@ FollowList.prototype.render = function () {
 
     var ul = this.el.querySelector('ul');
     this._buttons.forEach(function(btn){
-        btn.render();
-        ul.append(btn.el);
+        ul.appendChild(btn.el);
     });
     return this.el.outerHTML;
 };
