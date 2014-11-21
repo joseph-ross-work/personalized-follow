@@ -1,4 +1,5 @@
 var ajax = require('reqwest');
+var base64 = require('base64');
 
 var MS_IN_DAY = 86400000;
 
@@ -6,7 +7,7 @@ var getTokenData = function(token){
     var parts = token.split('.');
     var dataPart = parts[1];
     var data = JSON.parse(base64.atob(dataPart));
-    var network = data.domain === 'livefyre.com' ? data.domain : data.domain.split('.')[0];
+    var network = data.domain;
     var userId = data.user_id;
     var urn = 'urn:livefyre:' + network + ':user=' + userId;
 
@@ -24,19 +25,32 @@ function userSubscriptionUrl(network, urn, token) {
 function topicsResponseToStoreData(response) {
     //TODO: Turn this into something better
     //{"status": "ok", "code": 200, "data": {"subscriptions": [{"to": "urn:livefyre:demo.fyre.co:site=362588:topic=sports", "type": "personalStream", "by": "urn:livefyre:demo.fyre.co:user=53e177ae1083592090001157", "createdAt": 1407285932}, {"to": "urn:livefyre:demo.fyre.co:site=362588:topic=all", "type": "personalStream", "by": "urn:livefyre:demo.fyre.co:user=53e177ae1083592090001157", "createdAt": 1407389382}, {"to": "urn:livefyre:demo.fyre.co:site=362588:topic=front_page", "type": "personalStream", "by": "urn:livefyre:demo.fyre.co:user=53e177ae1083592090001157", "createdAt": 1407389380}, {"to": "urn:livefyre:demo.fyre.co:site=362588:topic=politics", "type": "personalStream", "by": "urn:livefyre:demo.fyre.co:user=53e177ae1083592090001157", "createdAt": 1415296039}, {"to": "urn:livefyre:demo.fyre.co:site=362588:topic=blog", "type": "personalStream", "by": "urn:livefyre:demo.fyre.co:user=53e177ae1083592090001157", "createdAt": 1415650220}]}}
-    
+    var data = {};
+    response.data.subscriptions.forEach(function(sub) {
+        try {
+            data[sub.to] = {
+                topic: sub.to,
+                displayName: sub.to.split('=').pop(),
+                state: true
+            };
+        } catch (e) {
+
+        }
+
+    });
     //store.lastUpdate = (new Data()).toISOString();
-    return response.data;
+    return data;
 }
 
-function updateDataToPatchData(data) {
-
+function updateDataToPatchData(response) {
+    var data = {};
+    return data;
 }
 
 var tokenData, url, storageId;
 
 function FollowService(opts) {
-    this._environment = opts.environment;
+    this._environment = typeof opts.environment === 'string' ? opts.environment : 'production';
     if (opts.token) {
         this.setToken(opts.token);
     }
@@ -45,7 +59,7 @@ function FollowService(opts) {
 FollowService.prototype.setToken = function(token) {
     tokenData = getTokenData(token);
     storageId = 'lf-follow-' + tokenData.userId;
-    url = userSubscriptionUrl(this._tokenData);
+    url = userSubscriptionUrl(tokenData.network, tokenData.userUrn, token);
     
     var store = window.localStorage.getItem(storageId);
     if (!store) {
@@ -62,13 +76,16 @@ FollowService.prototype.getTopicStates = function(callback) {
         isLessThanDayOld = (new Date() - (new Date(store.lastUpdate)) < MS_IN_DAY)
     }
 
-    if (isLessThanDayOld) {
+    if (isLessThanDayOld && Object.keys(store).length > 0 ) {
+        //Just return what's in local storage if store is fresh and has content
         callback(store);
     } else { 
         ajax({ 
-            url: url, method: 'get' 
+            url: url, 
+            method: 'get',
+            contentType: null
         }).then(function(resp){
-            var cleanedData = topicsResponseToStoreData(resp);
+            var cleanedData = topicsResponseToStoreData(resp, store);
             window.localStorage.setItem(storageId, JSON.stringify(cleanedData));
             callback(cleanedData);
         });

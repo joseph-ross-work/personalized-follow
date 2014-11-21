@@ -24,7 +24,7 @@
     "events-event-emitter": "0.0.4",
     "flux-dispatcher": "0.1.0",
     "node-polyglot": "0.4.1",
-    "reqwest": "1.1.5",
+    "reqwest": "joseph-ross-work/reqwest.git#empty-content-type-for-bodyless",
     "base64": "ross-pfahler/Base64.js.git#v0.4.0",
 
     "mout": "git://github.com/mout/mout.git#v0.10.0"

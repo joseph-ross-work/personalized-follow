@@ -5,22 +5,16 @@ var FollowService = require('./follow-service');
 function FollowHub(opts) {
     this._bus = opts.bus || window;
     this._auth = opts.auth || auth;
-    this._user = auth.get('livefyre');
     this._service = new FollowService(opts);
-
     this.attachListeners();
-    if (this._user) {
-        this.initFromUser(this._user);
-    }
+    this.initFromUser(auth.get('livefyre'));
 }
 
 FollowHub.prototype.attachListeners = function() {
     var self = this;
 
     this._bus.addEventListener('message', this._onPostMessage.bind(this));
-
     this._auth.on('login.livefyre', this.initFromUser.bind(this));
-
     this._auth.on('logout', function() {
 
         //Send out a kill msg?
@@ -28,11 +22,11 @@ FollowHub.prototype.attachListeners = function() {
 };
 
 FollowHub.prototype.initFromUser = function(newUser) {
-    if (this._user.id === newUser.id) {
+    if (this._user && this._user.id === newUser.id) {
         return;
     }
     this._user = newUser;
-    this._service.setToken(newUser);
+    this._service.setToken(newUser.get('token'));
     this._service.getTopicStates(this._sendTopicStates.bind(this));
 };
 
@@ -69,25 +63,26 @@ FollowHub.prototype._onPostMessage = function(event) {
     }
 };
 
-FollowHub.prototype._sendTopicStateUpdate = function (opts) {
+FollowHub.prototype._sendTopicStateUpdate = function (topic) {
     var msg = {
         to: 'follow-widget',
         action: 'put',
         data: {
-            topic: opts.topic,
-            state: opts.state
+            topic: topic.topic,
+            state: topic.state,
+            displayName: topic.displayName
         }
     }
     this._bus.postMessage(JSON.stringify(msg),'*');
 };
 
-FollowHub.prototype._sendTopicStates = function (topic) {
+FollowHub.prototype._sendTopicStates = function (topics) {
+    console.log(topics)
     var msg = {
         to: 'follow-widget',
         action: 'put',
         data: {
-            //TODO: Remove placeholder when ready to test
-            topics: { 'someTopic' : { state: true, displayName: 'Some Topic'} }
+            topics: topics
         }
     }
     this._bus.postMessage(JSON.stringify(msg),'*');

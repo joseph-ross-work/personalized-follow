@@ -3,11 +3,11 @@ function FollowButton(opts) {
         return;
     }
     this.topic = opts.topic;
+    this.displayName = opts.displayName;
     this._bus = opts.bus || window;
     this._destroyOnUnfollow = Boolean(opts._destroyOnUnfollow);
     this._state = opts.state === false ?  false : true;
     this.el = opts.el || document.createElement('div');
-
     this._bus.addEventListener('message', this._onPostMessage.bind(this));
     this.render();
 }
@@ -15,7 +15,6 @@ function FollowButton(opts) {
 FollowButton.prototype.template = require('../templates/follow-button.hb');
 
 FollowButton.prototype._onPostMessage = function(event){
-    console.log('On Post in Button')
     var msg = null; 
     if (typeof event.data === 'object') {
         msg = event.data;
@@ -60,6 +59,7 @@ FollowButton.prototype._sendTopicStateUpdate = function () {
         action: 'put',
         data: {
             topic: this.topic,
+            displayName: this.displayName,
             state: this._state
         }
     }
@@ -68,7 +68,7 @@ FollowButton.prototype._sendTopicStateUpdate = function () {
 
 FollowButton.prototype.render = function () {
     var context = { 
-        title: this.topic.displayName,
+        title: this.displayName,
         text: !this._state ? 'Follow' : 'Unfollow'
     };
     var html = this.template(context);

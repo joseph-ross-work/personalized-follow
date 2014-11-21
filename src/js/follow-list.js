@@ -18,9 +18,10 @@ FollowList.prototype._initialize = function() {
 };
 
 FollowList.prototype._createButtons = function(topics) {
-    this._buttons = Object.keys(topics).map(function(topic, i, arr){
+    this._buttons = Object.keys(topics).map(function(topicKey, i, arr){
         return new FollowButton({ 
-            topic: topic,
+            topic: topics[topicKey].topic,
+            displayName: topics[topicKey].displayName,
             destroyOnUnfollow: this._destroyOnUnfollow
         });
     });
