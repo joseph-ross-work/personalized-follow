@@ -22,6 +22,7 @@ FollowList.prototype._createButtons = function(topics) {
         return new FollowButton({ 
             topic: topics[topicKey].topic,
             displayName: topics[topicKey].displayName,
+            state: topics[topicKey].state,
             destroyOnUnfollow: this._destroyOnUnfollow
         });
     });

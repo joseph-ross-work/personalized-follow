@@ -127,9 +127,10 @@ FollowService.prototype.updateTopicState = function(data, callback) {
     var cleanedData = updateDataToPatchData(data);
     ajax({ 
         url: url, 
-        method: 'patch',
+        method: data.state ? 'post' : 'patch',
         contentType: 'application/json',
         processData: false,
+        crossOrigin: true,
         data: JSON.stringify(cleanedData)
     }).fail(function(resp){
         store[data.topic] = oldVal;

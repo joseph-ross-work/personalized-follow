@@ -52,14 +52,14 @@ FollowButton.prototype._onButtonClick = function (event) {
     this.updateTopicState(!this._state);
 };
 
-FollowButton.prototype._sendTopicStateUpdate = function () {
+FollowButton.prototype._sendTopicStateUpdate = function (state) {
     var msg = {
         to: 'follow-hub',
         action: 'put',
         data: {
             topic: this.topic,
             displayName: this.displayName,
-            state: this._state
+            state: state
         }
     }
     this._bus.postMessage(JSON.stringify(msg),'*');
