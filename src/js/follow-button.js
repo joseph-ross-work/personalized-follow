@@ -48,7 +48,6 @@ FollowButton.prototype.updateTopicState = function(state) {
 FollowButton.prototype._onButtonClick = function (event) {
     event.stopPropagation();
     event.preventDefault();
-
     this._sendTopicStateUpdate(!this._state);
     this.updateTopicState(!this._state);
 };
@@ -73,12 +72,13 @@ FollowButton.prototype.render = function () {
     };
     var html = this.template(context);
     this.el.innerHTML = html;
+    this.el.querySelector('.lf-follow-btn').onclick = this._onButtonClick.bind(this);
     return this.el.outerHTML;
 };
 
 FollowButton.prototype.destroy = function () {
-    this._bus.removeEventListener('message', this._onPostMessage);
-    this.el.parent.removeChild(this.el);
+    this._bus ? this._bus.removeEventListener('message', this._onPostMessage) : null;
+    this.el ? this.el.parent.removeChild(this.el) : null;
 };
 
 module.exports = FollowButton;

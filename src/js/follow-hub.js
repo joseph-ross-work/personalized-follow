@@ -54,7 +54,7 @@ FollowHub.prototype._onPostMessage = function(event) {
     if (msg.action === 'put') {
         this._service.updateTopicState(
             { 
-                topics: msg.data.topic, 
+                topic: msg.data.topic, 
                 state: msg.data.state, 
                 displayName: msg.data.displayName
             }, 
@@ -67,20 +67,15 @@ FollowHub.prototype._sendTopicStateUpdate = function (topic) {
     var msg = {
         to: 'follow-widget',
         action: 'put',
-        data: {
-            topic: topic.topic,
-            state: topic.state,
-            displayName: topic.displayName
-        }
+        data: topic
     }
     this._bus.postMessage(JSON.stringify(msg),'*');
 };
 
 FollowHub.prototype._sendTopicStates = function (topics) {
-    console.log(topics)
     var msg = {
         to: 'follow-widget',
-        action: 'put',
+        action: 'post',
         data: {
             topics: topics
         }

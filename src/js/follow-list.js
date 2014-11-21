@@ -37,7 +37,7 @@ FollowList.prototype._requestTopicStates = function () {
     this._bus.postMessage(JSON.stringify(msg),'*');
 };
 
-FollowList.prototype._onPut = function (topics) {
+FollowList.prototype._onPost = function (topics) {
     this._createButtons(topics);
 }
 
@@ -58,8 +58,8 @@ FollowList.prototype._onPostMessage = function(event){
         return;
     } 
 
-    if (msg.action === 'put'){ 
-        this._onPut(msg.data.topics)
+    if (msg.action === 'post'){ 
+        this._onPost(msg.data.topics)
     }
 };
 
@@ -69,8 +69,13 @@ FollowList.prototype.render = function () {
     this.el.innerHTML = html;
 
     var ul = this.el.querySelector('ul');
-    this._buttons.forEach(function(btn){
-        ul.appendChild(btn.el);
+    this._buttons = this._buttons.filter(function(btn, i, arr){
+        if (btn.el) {
+            ul.appendChild(btn.el);
+            return true;
+        } 
+        btn.destroy();
+        return false;
     });
     return this.el.outerHTML;
 };

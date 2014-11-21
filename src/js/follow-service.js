@@ -12,7 +12,7 @@ var getTokenData = function(token){
     var urn = 'urn:livefyre:' + network + ':user=' + userId;
 
     return {
-        network: network,
+        network: 'demo.quill.fyre.co',//network,
         userId: userId,
         userUrn: urn
     }
@@ -30,7 +30,7 @@ function topicsResponseToStoreData(response) {
         try {
             data[sub.to] = {
                 topic: sub.to,
-                displayName: sub.to.split('=').pop(),
+                displayName: sub.to.split('=').pop().replace('_', ' '),
                 state: true
             };
         } catch (e) {
@@ -42,9 +42,17 @@ function topicsResponseToStoreData(response) {
     return data;
 }
 
-function updateDataToPatchData(response) {
-    var data = {};
-    return data;
+function updateDataToPatchData(data) {
+    var patchData = {};
+    if (data.state) {
+        patchData['subscriptions'] = [{'to': data.topic}];
+    } else { 
+        patchData['delete'] = [{'to': data.topic}];
+    }
+
+    //{"subscriptions":[{"to":"urn:livefyre:demo.fyre.co:site=362588:topic=sports"}]}
+
+    return patchData;
 }
 
 var tokenData, url, storageId;
@@ -94,22 +102,40 @@ FollowService.prototype.getTopicStates = function(callback) {
 };
 
 FollowService.prototype.updateTopicState = function(data, callback) {
-    var store = JSON.parse(window.localStorage.getItem(storageId))[data.topic];
-    var oldVal = store[data.topic]['state'];
+    var store = JSON.parse(window.localStorage.getItem(storageId)) || {};
+    var oldVal = store[data.topic] ? store[data.topic] : null;
 
-    store[data.topic]['state'] = data.state;
-    store.lastUpdate = (new Data()).toISOString();
+    if (oldVal) {
+        store[data.topic]['state'] = data.state;
+    } else {    
+        oldVal = {
+            topic: data.topic,
+            displayName: data.displayName,
+            state: !data.state
+        };
+        store[data.topic] = {
+            topic: data.topic,
+            displayName: data.displayName,
+            state: data.state
+        };
+    }
+
+    store.lastUpdate = (new Date()).toISOString();
     window.localStorage.setItem(storageId, JSON.stringify(store));
     callback(data);
 
     var cleanedData = updateDataToPatchData(data);
     ajax({ 
-        url: url, method: 'patch', data: cleanedData
+        url: url, 
+        method: 'patch',
+        contentType: 'application/json',
+        processData: false,
+        data: JSON.stringify(cleanedData)
     }).fail(function(resp){
-        store[data.topic]['state'] = oldVal;
-        store.lastUpdate = (new Data()).toISOString();
+        store[data.topic] = oldVal;
+        store.lastUpdate = (new Date()).toISOString();
         window.localStorage.setItem(storageId, JSON.stringify(store));
-        callback(store[data.topic]);
+        callback(oldVal);
     });
 };
 
