@@ -23,8 +23,6 @@ function userSubscriptionUrl(network, urn, token) {
 } 
 
 function topicsResponseToStoreData(response) {
-    //TODO: Turn this into something better
-    //{"status": "ok", "code": 200, "data": {"subscriptions": [{"to": "urn:livefyre:demo.fyre.co:site=362588:topic=sports", "type": "personalStream", "by": "urn:livefyre:demo.fyre.co:user=53e177ae1083592090001157", "createdAt": 1407285932}, {"to": "urn:livefyre:demo.fyre.co:site=362588:topic=all", "type": "personalStream", "by": "urn:livefyre:demo.fyre.co:user=53e177ae1083592090001157", "createdAt": 1407389382}, {"to": "urn:livefyre:demo.fyre.co:site=362588:topic=front_page", "type": "personalStream", "by": "urn:livefyre:demo.fyre.co:user=53e177ae1083592090001157", "createdAt": 1407389380}, {"to": "urn:livefyre:demo.fyre.co:site=362588:topic=politics", "type": "personalStream", "by": "urn:livefyre:demo.fyre.co:user=53e177ae1083592090001157", "createdAt": 1415296039}, {"to": "urn:livefyre:demo.fyre.co:site=362588:topic=blog", "type": "personalStream", "by": "urn:livefyre:demo.fyre.co:user=53e177ae1083592090001157", "createdAt": 1415650220}]}}
     var data = {};
     response.data.subscriptions.forEach(function(sub) {
         try {
@@ -49,8 +47,6 @@ function updateDataToPatchData(data) {
     } else { 
         patchData['delete'] = [{'to': data.topic}];
     }
-
-    //{"subscriptions":[{"to":"urn:livefyre:demo.fyre.co:site=362588:topic=sports"}]}
 
     return patchData;
 }

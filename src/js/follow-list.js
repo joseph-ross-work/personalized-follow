@@ -13,6 +13,7 @@ function FollowList(opts) {
 };
 
 FollowList.prototype.template = require('../templates/follow-list.hb');
+FollowList.prototype.listSelector = '.lf-follow-list';
 
 FollowList.prototype._initialize = function() {
     this._bus.addEventListener('message', this._onPostMessage.bind(this));
@@ -72,10 +73,10 @@ FollowList.prototype.render = function () {
     var html = this.template(context);
     this.el.innerHTML = html;
 
-    var ul = this.el.querySelector('ul');
+    var list = this.el.querySelector(this.listSelector);
     this._buttons = this._buttons.filter(function(btn, i, arr){
         if (btn.el) {
-            ul.appendChild(btn.el);
+            list.appendChild(btn.el);
             return true;
         } 
         btn.destroy();
