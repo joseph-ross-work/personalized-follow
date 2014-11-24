@@ -1,12 +1,16 @@
+/**
+* A button and label for a given topic. Its state reflects
+* the subscription status of the current user.
+*/
 function FollowButton(opts) {
     if (!opts.topic) {
         return;
     }
     this.topic = opts.topic;
     this.displayName = opts.displayName;
+    this._state = opts.state === false ?  false : true;
     this._bus = opts.bus || window;
     this._destroyOnUnfollow = Boolean(opts._destroyOnUnfollow);
-    this._state = opts.state === false ?  false : true;
     this.el = opts.el || document.createElement('div');
     this._bus.addEventListener('message', this._onPostMessage.bind(this));
     this.render();

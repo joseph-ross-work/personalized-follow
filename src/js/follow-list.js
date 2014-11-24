@@ -1,5 +1,8 @@
 var FollowButton = require('./follow-button');
 
+/**
+* A list that shows all followed topics for the logged in user.
+*/
 function FollowList(opts) {
     this._buttons = [];
     this._bus = opts.bus || window;

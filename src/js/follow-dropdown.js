@@ -1,9 +1,14 @@
 var FollowList = require('./follow-list')
 
+/**
+* A dropdown of provided topics that reflect the subscription status
+* of the current user.
+*/
 function FollowDropdown(opts) {
     if (opts.topics !== 'array' || opts.topics.length === 0) {
         return;
     }
+    //Topics = { topicKey : { topic: topicKey, displayName: 'Something Formatted', state: true }  }
     this._topics = opts.topics;
     opts.destroyOnUnfollow = false;
     FollowList.call(this, opts);
@@ -25,7 +30,7 @@ FollowDropdown.prototype._onPut = function (topics) {
 };
 
 FollowDropdown.prototype._updateButtons = function(topics) { 
-    _buttons.forEach(function(button) {
+    this._buttons.forEach(function(button) {
         if(topics[button.topic]) {
             button.updateTopicState(topics[button.topic].state);
             return true;

@@ -12,7 +12,7 @@ var getTokenData = function(token){
     var urn = 'urn:livefyre:' + network + ':user=' + userId;
 
     return {
-        network: 'demo.quill.fyre.co',//network,
+        network: network,
         userId: userId,
         userUrn: urn
     }
