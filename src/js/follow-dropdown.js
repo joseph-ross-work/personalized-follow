@@ -5,7 +5,6 @@ var FollowList = require('./follow-list')
 * of the current user.
 */
 function FollowDropdown(opts) {
-    console.log('FOLLOW DROPDOWN ', opts)
     if (typeof opts.topics !== 'object') {
         return;
     }
