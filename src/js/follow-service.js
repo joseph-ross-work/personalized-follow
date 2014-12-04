@@ -36,7 +36,6 @@ function topicsResponseToStoreData(response) {
         }
 
     });
-    //store.lastUpdate = (new Data()).toISOString();
     return data;
 }
 
@@ -76,7 +75,7 @@ FollowService.prototype.getTopicStates = function(callback) {
     store = store ? store : {};
     var isLessThanDayOld = true;
 
-    if (store.lastUpdated) {
+    if (store.lastUpdate) {
         isLessThanDayOld = (new Date() - (new Date(store.lastUpdate)) < MS_IN_DAY)
     }
 

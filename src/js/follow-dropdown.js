@@ -20,7 +20,6 @@ FollowDropdown.prototype.template = require('../templates/follow-dropdown.hb');
 FollowDropdown.prototype.listSelector = '.lf-follow-dropdown-popover';
 
 FollowDropdown.prototype._initialize = function() {
-    console.log('INITIALIZE DROPDOWN')
     this._createButtons(this._topics);
     this._bus.addEventListener('message', this._onPostMessage);
     this._requestTopicStates();

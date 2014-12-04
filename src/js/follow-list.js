@@ -44,7 +44,11 @@ FollowList.prototype._requestTopicStates = function () {
 
 FollowList.prototype._onPost = function (topics) {
     this._createButtons(topics);
-}
+};
+
+FollowList.prototype._onPut = function(topics) {
+
+};
 
 FollowList.prototype._onPostMessage = function(event){
     var msg = null; 
@@ -63,8 +67,10 @@ FollowList.prototype._onPostMessage = function(event){
         return;
     } 
 
-    if (msg.action === 'post'){ 
-        this._onPost(msg.data.topics)
+    if (msg.action === 'post' && this._onPost) { 
+        this._onPost(msg.data.topics);
+    } else if (msg.action === 'put' && this._onPut) {
+        this._onPut(msg.data.topics);
     }
 };
 
